@@ -1,5 +1,6 @@
 package com.uiu.socialapp.socialapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;

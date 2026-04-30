@@ -1,15 +1,16 @@
 $kind: http-request
 name: Login
 method: POST
-url: '{{baseUrl}}/api/users/login'
+url: "{{baseUrl}}/api/users/login"
 order: 6000
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
-  content: |-
-    {
-      "email": "user@example.com",
-      "password": "password123"
-    }
+  content: "{\r
+
+    \  \"email\": \"daniel@bscse.uiu.ac.bd\",\r
+
+    \  \"password\": \"mypassword\"\r
+
+    }"
