@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
 //    Checking duplicate data(so fast)
-    boolean existByUniversityId(String universityId);
+    boolean existsByUniversityId(String universityId);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-    boolean existsById(String id);
+    boolean existsById(Long id);
 
 
 //    For searching out data(Used for relief from NullPointerException)

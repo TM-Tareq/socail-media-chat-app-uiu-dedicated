@@ -2,6 +2,7 @@ package com.uiu.socialapp.socialapp.service;
 
 import com.uiu.socialapp.socialapp.dto.RegisterRequest;
 import com.uiu.socialapp.socialapp.exception.CustomException;
+import com.uiu.socialapp.socialapp.model.Role;
 import com.uiu.socialapp.socialapp.model.User;
 import com.uiu.socialapp.socialapp.repository.UserRepository;
 import com.uiu.socialapp.socialapp.security.JwtService;
@@ -24,61 +25,68 @@ public class UserService {
 
     public User registerUser(RegisterRequest request) {
 
-        // id, name, username
-        if(request.getUniversityId() == null || !request.getUniversityId().startsWith("011") || request.getUniversityId().length() < 10) throw new CustomException("Id section must be fillup and starts with 011");
-        if(userRepository.findById(request.getUniversityId()).isPresent()) throw new CustomException("This Id already exists");
+        if(request.getUniversityId() == null || !request.getUniversityId().startsWith("011") || request.getUniversityId().length() != 10)
+            throw new CustomException("Id section must be fillup and starts with 011");
 
-        if (request.getName() == null || request.getName().isBlank()) throw new CustomException("Name section must fill up");
+        if(userRepository.existsByUniversityId(request.getUniversityId()))
+            throw new CustomException("This Id already exists");
 
-        if(request.getUsername() == null || request.getUsername().isBlank()) throw new CustomException("Username must be fillup");
-        if(userRepository.findByUsername(request.getUsername()).isPresent()) throw new CustomException("This username already exists");
+        if (request.getName() == null || request.getName().isBlank())
+            throw new CustomException("Name section must fill up");
 
-        //    Email validation
-        if(request.getEmail() == null || !request.getEmail().endsWith("@bscse.uiu.ac.bd")) throw new CustomException("Email must end with @bscse.uiu.ac.bd");
-        if(userRepository.findByEmail(request.getEmail()).isPresent()) throw new CustomException("This email already exists");
+        if(request.getUsername() == null || request.getUsername().isBlank())
+            throw new CustomException("Username must be fillup");
 
-        //    Password validation
-        if(request.getPassword() == null || request.getPassword().length() < 6) {
+        if(userRepository.existsByUsername(request.getUsername()))
+            throw new CustomException("This username already exists");
+
+        if(request.getEmail() == null || !request.getEmail().endsWith("@bscse.uiu.ac.bd"))
+            throw new CustomException("Email must end with @bscse.uiu.ac.bd");
+
+        if(userRepository.existsByEmail(request.getEmail()))
+            throw new CustomException("This email already exists");
+
+        if(request.getPassword() == null || request.getPassword().length() < 6)
             throw new CustomException("Password must contains at least 6 characters");
-        }
 
         User user = new User();
         user.setUniversityId(request.getUniversityId());
+        user.setName(request.getName());
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
 
         String hashedPassword = bCryptPasswordEncoder.encode(request.getPassword());
         user.setPassword(hashedPassword);
 
-        user.setRole(com.uiu.socialapp.socialapp.model.Role.USER);
+        user.setRole(Role.USER);
 
-        //    Save
-        return userRepository.save(user); // store and return does both
+        return userRepository.save(user);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
-    };
-
-    public User getUserById(String id) {
-        return userRepository.findById(id)
-                .orElseThrow(()-> new CustomException("User not found"));
-
     }
 
-    public User updateUser(String id, User newUser, String loggedInEmail) {
-        User existUser = userRepository.findById(id).orElseThrow(()-> new CustomException("User not found"));
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found"));
+    }
+
+    public User updateUser(Long id, User newUser, String loggedInEmail) {
+        User existUser = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found"));
 
         if(!existUser.getEmail().equals(loggedInEmail)) {
             throw new CustomException("You are not allowed to update this user's profile!");
         }
 
-        if(newUser.getUsername() != null && !newUser.getUsername().equals((existUser.getUsername()))) {
+        if(newUser.getUsername() != null && !newUser.getUsername().equals(existUser.getUsername())) {
             if(userRepository.existsByUsername(newUser.getUsername())) {
                 throw new CustomException("This username already exists");
             }
             existUser.setUsername(newUser.getUsername());
         }
+
         if(newUser.getPassword() != null && !newUser.getPassword().isBlank()) {
             existUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
         }
@@ -86,18 +94,20 @@ public class UserService {
         return userRepository.save(existUser);
     }
 
-    public void deleteUser(String id) {
-        User user = userRepository.findById(id).orElseThrow(()-> new CustomException("User not found"));
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found"));
         userRepository.delete(user);
     }
 
     public String loginUser(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException("User not found"));
+
         if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new CustomException("Invalid password");
         }
-        String token = jwtService.generateToken(user.getEmail());
-        return token;
+
+        return jwtService.generateToken(user.getEmail());
     }
 }

@@ -1,0 +1,10 @@
+$kind: collection
+name: Social App API
+description: Postman collection for the Spring Boot Social App - UserController endpoints
+variables:
+  - key: baseUrl
+    value: 'http://localhost:8080'
+    description: Base URL for the Social App API
+  - key: token
+    value: ''
+    description: JWT Bearer token for authenticated requests
