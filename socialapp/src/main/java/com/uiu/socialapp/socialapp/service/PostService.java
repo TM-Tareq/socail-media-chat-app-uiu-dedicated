@@ -1,5 +1,6 @@
 package com.uiu.socialapp.socialapp.service;
 
+import com.uiu.socialapp.socialapp.dto.PostResponse;
 import com.uiu.socialapp.socialapp.exception.CustomException;
 import com.uiu.socialapp.socialapp.model.Post;
 import com.uiu.socialapp.socialapp.model.User;
@@ -19,7 +20,7 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    public Post createPost(String content, String imageUrl, String email) {
+    public PostResponse createPost(String content, String imageUrl, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException("User not found"));
 
@@ -29,6 +30,16 @@ public class PostService {
         post.setCreatedAt(LocalDateTime.now());
         post.setUser(user);
 
-        return postRepository.save(post);
+        Post savePost = postRepository.save(post);
+
+        PostResponse response = new PostResponse();
+        response.setId(savePost.getId());
+        response.setContent(savePost.getContent());
+        response.setImageUrl(savePost.getImageUrl());
+        response.setCreateAt(savePost.getCreatedAt());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 }

@@ -1,5 +1,7 @@
 package com.uiu.socialapp.socialapp.controller;
 
+import com.uiu.socialapp.socialapp.dto.CreatePostRequest;
+import com.uiu.socialapp.socialapp.dto.PostResponse;
 import com.uiu.socialapp.socialapp.model.Post;
 import com.uiu.socialapp.socialapp.service.PostService;
 import com.uiu.socialapp.socialapp.service.UserService;
@@ -19,9 +21,9 @@ public class PostController {
     }
 
     @PostMapping
-    public Post createPost(@RequestBody Post post, HttpServletRequest request) {
-        String email = (String) request.getAttribute("userEmail");
+    public PostResponse createPost(@RequestBody CreatePostRequest request, HttpServletRequest httprequest) {
+        String email = (String) httprequest.getAttribute("userEmail");
 
-        return postService.createPost(post.getContent(), post.getImageUrl(), email);
+        return postService.createPost(request.getContent(), request.getImageUrl(), email);
     }
 }
