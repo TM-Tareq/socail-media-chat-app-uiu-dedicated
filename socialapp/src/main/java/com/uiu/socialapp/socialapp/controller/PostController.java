@@ -27,7 +27,7 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostResponse> getPosts() {
-        return postService.getAllPosts();
+    public List<PostResponse> getPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        return postService.getAllPosts(page, size);
     }
 }

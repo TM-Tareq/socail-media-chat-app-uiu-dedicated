@@ -6,9 +6,10 @@ import com.uiu.socialapp.socialapp.model.Post;
 import com.uiu.socialapp.socialapp.model.User;
 import com.uiu.socialapp.socialapp.repository.PostRepository;
 import com.uiu.socialapp.socialapp.repository.UserRepository;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,11 +45,13 @@ public class PostService {
 
         return response;
     }
-    public List<PostResponse> getAllPosts() {
+    public List<PostResponse> getAllPosts(int page, int size) {
 
-//        List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size);
 
-        return postRepository.findAllByOrderByCreatedAtDesc().stream().map(post -> {
+        Page<Post> postPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+        return postPage.getContent().stream().map(post -> {
             PostResponse response = new PostResponse();
             response.setId(post.getId());
             response.setContent(post.getContent());
