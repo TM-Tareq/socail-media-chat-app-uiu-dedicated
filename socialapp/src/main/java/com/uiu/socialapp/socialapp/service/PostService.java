@@ -6,9 +6,11 @@ import com.uiu.socialapp.socialapp.model.Post;
 import com.uiu.socialapp.socialapp.model.User;
 import com.uiu.socialapp.socialapp.repository.PostRepository;
 import com.uiu.socialapp.socialapp.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -41,5 +43,20 @@ public class PostService {
         response.setEmail(user.getEmail());
 
         return response;
+    }
+    public List<PostResponse> getAllPosts() {
+
+//        List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        return postRepository.findAllByOrderByCreatedAtDesc().stream().map(post -> {
+            PostResponse response = new PostResponse();
+            response.setId(post.getId());
+            response.setContent(post.getContent());
+            response.setImageUrl(post.getImageUrl());
+            response.setUsername(post.getUser().getUsername());
+            response.setEmail(post.getUser().getEmail());
+
+            return response;
+        }).toList();
     }
 }
