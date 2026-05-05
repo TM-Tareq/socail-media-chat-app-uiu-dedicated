@@ -62,4 +62,20 @@ public class PostService {
             return response;
         }).toList();
     }
+    public List<PostResponse> getAllPostsByUserEmail(String email, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Post> postPage = postRepository.findByUserEmailOrderByCreatedAtDesc(email, pageable);
+
+        return postPage.getContent().stream().map(post -> {
+            PostResponse response = new PostResponse();
+            response.setId(post.getId());
+            response.setContent(post.getContent());
+            response.setImageUrl(post.getImageUrl());
+            response.setUsername(post.getUser().getUsername());
+            response.setEmail(post.getUser().getEmail());
+
+            return response;
+        }).toList();
+    }
 }

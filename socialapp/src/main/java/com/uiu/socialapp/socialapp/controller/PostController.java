@@ -2,9 +2,7 @@ package com.uiu.socialapp.socialapp.controller;
 
 import com.uiu.socialapp.socialapp.dto.CreatePostRequest;
 import com.uiu.socialapp.socialapp.dto.PostResponse;
-import com.uiu.socialapp.socialapp.model.Post;
 import com.uiu.socialapp.socialapp.service.PostService;
-import com.uiu.socialapp.socialapp.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,5 +27,11 @@ public class PostController {
     @GetMapping
     public List<PostResponse> getPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         return postService.getAllPosts(page, size);
+    }
+
+    @GetMapping("/me")
+    public List<PostResponse> getMyPosts(HttpServletRequest request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        String email = request.getAttribute("userEmail").toString();
+        return postService.getAllPostsByUserEmail(email, page, size);
     }
 }
