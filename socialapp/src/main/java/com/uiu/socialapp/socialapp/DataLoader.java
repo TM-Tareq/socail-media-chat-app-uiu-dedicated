@@ -1,10 +1,8 @@
 package com.uiu.socialapp.socialapp;
 
 import com.uiu.socialapp.socialapp.dto.RegisterRequest;
-import com.uiu.socialapp.socialapp.model.User;
 import com.uiu.socialapp.socialapp.repository.UserRepository;
 import com.uiu.socialapp.socialapp.service.UserService;
-import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
