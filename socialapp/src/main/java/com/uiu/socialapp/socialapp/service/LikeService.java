@@ -40,4 +40,10 @@ public class LikeService {
             return "Liked";
         }
     }
+
+    public int getLikeCount(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException("Post not found"));
+
+        return likeRepository.countByPost(post);
+    }
 }

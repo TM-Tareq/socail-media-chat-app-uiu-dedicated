@@ -20,4 +20,10 @@ public class LikeController {
         String email = (String) request.getAttribute("userEmail");
         return likeService.toggleLike(postId,email);
     }
+    @GetMapping("/{postId}/count")
+    public int getLikeCount(@PathVariable Long postId, HttpServletRequest request){
+//        String email = (String) request.getAttribute("userEmail");
+
+        return likeService.getLikeCount(postId);
+    }
 }
