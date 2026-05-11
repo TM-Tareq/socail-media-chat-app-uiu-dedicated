@@ -1,5 +1,6 @@
 package com.uiu.socialapp.socialapp.controller;
 
+import com.uiu.socialapp.socialapp.dto.CommentResponse;
 import com.uiu.socialapp.socialapp.model.Comment;
 import com.uiu.socialapp.socialapp.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public class CommentController {
     }
 
     @PostMapping("/{postId}")
-    public Comment addComment(@PathVariable Long postId, @RequestBody Map<String, String> body, HttpServletRequest request) {
+    public CommentResponse addComment(@PathVariable Long postId, @RequestBody Map<String, String> body, HttpServletRequest request) {
         String email = (String) request.getAttribute("userEmail");
         String content = body.get("content");
 
@@ -26,7 +27,7 @@ public class CommentController {
     }
 
     @GetMapping("/{postId}")
-    public List<Comment> getComments(@PathVariable Long postId, HttpServletRequest request) {
+    public List<CommentResponse> getComments(@PathVariable Long postId, HttpServletRequest request) {
         return commentService.getCommentsByPostId(postId);
     }
 

@@ -1,5 +1,6 @@
 package com.uiu.socialapp.socialapp.service;
 
+import com.uiu.socialapp.socialapp.dto.CommentResponse;
 import com.uiu.socialapp.socialapp.exception.CustomException;
 import com.uiu.socialapp.socialapp.model.Comment;
 import com.uiu.socialapp.socialapp.model.Post;
@@ -24,7 +25,7 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public Comment addComment(Long postId, String email, String commentContent) {
+    public CommentResponse addComment(Long postId, String email, String commentContent) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new CustomException("User not found"));
         Post post = postRepository.findById(postId)
@@ -38,12 +39,27 @@ public class CommentService {
         comment.setCreateTime(LocalDateTime.now());
         commentRepository.save(comment);
 
-        return comment;
+        CommentResponse response = new CommentResponse();
+        response.setId(comment.getId());
+        response.setContent(comment.getContent());
+        response.setCreateTime(comment.getCreateTime());
+        response.setUsername(comment.getUser().getUsername());
+        response.setEmail(comment.getUser().getEmail());
+
+        return response;
     }
 
-    public List<Comment> getCommentsByPostId(Long postId) {
+    public List<CommentResponse> getCommentsByPostId(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException("Post not found"));
-        return commentRepository.findAllByPost(post);
+        return commentRepository.findAllByPost(post).stream().map(comment -> {
+            CommentResponse response = new CommentResponse();
+            response.setId(comment.getId());
+            response.setContent(comment.getContent());
+            response.setCreateTime(comment.getCreateTime());
+            response.setUsername(comment.getUser().getUsername());
+            response.setEmail(comment.getUser().getEmail());
+            return response;
+        }).toList();
     }
 
     public void deleteComment(Long commentId, String email) {
